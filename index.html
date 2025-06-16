@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Book a Call | Your Name</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -107,24 +105,34 @@
   </footer>
 
   <script>
-    document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOv4STNJHqw6cjHsjSCuBhMJqnI_mUNzrcOYksM4nDK_p-snPHt-x_4VUg0MfuskNZaw/exec';
+
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
-      const data = new FormData(form);
-      // TODO: Replace the endpoint below with your own backend or email service.
-      // For a quick no-code option, create a form endpoint at https://formspree.io and paste it here.
-      const endpoint = 'https://formspree.io/f/YOUR-FORM-ID';
+      const formData = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        phone: form.phone.value.trim(),
+        availability: form.availability.value.trim(),
+      };
+
       try {
-        await fetch(endpoint, {
+        const response = await fetch(SCRIPT_URL, {
           method: 'POST',
-          body: data,
-          headers: { 'Accept': 'application/json' }
+          body: JSON.stringify(formData),
+          headers: { 'Content-Type': 'application/json' },
         });
-      } catch (err) {
-        console.error(err);
+
+        if (response.ok) {
+          form.reset();
+          document.getElementById('success').style.display = 'block';
+        } else {
+          alert('Oops! Something went wrong. Please try again.');
+        }
+      } catch (error) {
+        alert('Network error. Please try again later.');
       }
-      form.reset();
-      document.getElementById('success').style.display = 'block';
     });
   </script>
 </body>
